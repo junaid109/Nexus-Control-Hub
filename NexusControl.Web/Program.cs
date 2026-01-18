@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using NexusControl.Infrastructure.Data;
 using NexusControl.Web.Hubs;
+using Microsoft.Extensions.Hosting; // Ensure namespace is available just in case
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults(); // Add ServiceDefaults
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -12,6 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints(); // Map Default Endpoints
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

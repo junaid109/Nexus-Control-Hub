@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NexusControl.Infrastructure\NexusControl.Infrastructure.csproj" />
     <ProjectReference Include="..\NexusControl.Core\NexusControl.Core.csproj" />
+    <ProjectReference Include="..\NexusControl.ServiceDefaults\NexusControl.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

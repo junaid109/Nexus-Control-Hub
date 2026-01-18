@@ -1,5 +1,7 @@
 <Solution>
+  <Project Path="NexusControl.AppHost/NexusControl.AppHost.csproj" />
   <Project Path="NexusControl.Core/NexusControl.Core.csproj" />
   <Project Path="NexusControl.Infrastructure/NexusControl.Infrastructure.csproj" />
+  <Project Path="NexusControl.ServiceDefaults/NexusControl.ServiceDefaults.csproj" />
   <Project Path="NexusControl.Web/NexusControl.Web.csproj" />
 </Solution>
