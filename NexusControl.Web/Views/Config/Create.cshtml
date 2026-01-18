@@ -1,0 +1,49 @@
+@model NexusControl.Core.Entities.FeatureFlag
+@{
+    ViewData["Title"] = "Create Feature Flag";
+}
+
+<div class="glass-header mb-4">
+    <div class="flex justify-between items-center">
+        <h3>Create Feature Flag</h3>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="glass-panel" style="max-width: 600px; padding: var(--space-lg);">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="mb-4">
+            <label asp-for="Key" class="stat-label mb-2" style="display: block;">Flag Key (Unique)</label>
+            <input asp-for="Key" class="btn btn-secondary w-full" style="text-align: left; background: rgba(0,0,0,0.3); color: white;" placeholder="e.g. game.new_map_enabled" />
+            <span asp-validation-for="Key" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mb-4" style="display: flex; align-items: center; gap: 1rem;">
+            <div style="flex-grow: 1;">
+                 <label class="stat-label" style="display: block;">Initial State</label>
+                 <div class="text-muted" style="font-size: 0.85rem;">Should this feature be active immediately?</div>
+            </div>
+            <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                 <input asp-for="IsEnabled" type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                 <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px;"></span>
+            </label>
+            <style>
+                input:checked + .slider { background-color: var(--accent-primary); }
+                .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+                input:checked + .slider:before { transform: translateX(24px); }
+            </style>
+        </div>
+
+        <div class="mb-4">
+            <label asp-for="RulesJson" class="stat-label mb-2" style="display: block;">Rules (JSON)</label>
+            <textarea asp-for="RulesJson" rows="5" class="btn btn-secondary w-full" style="text-align: left; background: rgba(0,0,0,0.3); color: #a5f3fc; font-family: monospace;" placeholder='{ "minVersion": "1.0.5" }'></textarea>
+            <span asp-validation-for="RulesJson" class="text-danger" style="font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary w-full">Create Feature Flag</button>
+        </div>
+    </form>
+</div>

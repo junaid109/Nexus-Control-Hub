@@ -1,0 +1,61 @@
+@model IEnumerable<NexusControl.Core.Entities.FeatureFlag>
+@{
+    ViewData["Title"] = "Feature Flags";
+}
+
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-gradient">Feature Configuration</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <span>+ New Flag</span>
+    </a>
+</div>
+
+<div class="glass-panel table-container">
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50px;">Status</th>
+                <th>Key</th>
+                <th>Rules (JSON)</th>
+                <th style="text-align: right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.IsEnabled)
+                        {
+                            <span class="badge badge-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Disabled</span>
+                        }
+                    </td>
+                    <td style="font-family: monospace; color: var(--accent-secondary);">@item.Key</td>
+                    <td class="text-muted" style="font-family: monospace; font-size: 0.85rem;">
+                        @(item.RulesJson ?? "{}")
+                    </td>
+                    <td style="text-align: right;">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display: inline-block;">
+                           <button type="submit" class="btn" style="background: rgba(239, 68, 68, 0.1); color: #f87171; padding: 0.4rem 0.8rem; font-size: 0.8rem; border: 1px solid rgba(239, 68, 68, 0.2);">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (!Model.Any()) 
+{
+    <div class="glass-panel" style="padding: 3rem; text-align: center; margin-top: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚙️</div>
+        <h4 class="text-muted">No feature flags configured</h4>
+        <p class="text-muted mb-4">Add your first feature flag to control game behavior remotely.</p>
+        <a asp-action="Create" class="btn btn-primary">Create First Flag</a>
+    </div>
+}
