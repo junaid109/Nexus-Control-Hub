@@ -1,0 +1,88 @@
+@model IEnumerable<NexusControl.Core.Entities.GameAsset>
+@{
+    ViewData["Title"] = "Asset Library";
+}
+
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-gradient">Asset Management</h2>
+    <div style="font-size: 0.85rem; color: var(--text-muted);">
+        <span style="color: var(--accent-secondary);">Remote Content Delivery</span>
+    </div>
+</div>
+
+<!-- Upload Zone -->
+<div class="glass-panel mb-4" style="border: 2px dashed var(--border-glass); text-align: center; padding: 3rem; position: relative; transition: all 0.3s ease;" id="drop-zone">
+    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-muted);">☁️</div>
+    <h4 class="mb-2">Drop Game Assets Here</h4>
+    <p class="text-muted mb-4">Supports .fbx, .unitypackage, .json config files</p>
+    
+    <form asp-action="Upload" method="post" enctype="multipart/form-data" id="upload-form">
+        <input type="file" name="file" id="file-input" style="display: none;" onchange="document.getElementById('upload-form').submit();" />
+        <input type="hidden" name="assetType" value="General" />
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-input').click();">
+            Select File manually
+        </button>
+    </form>
+</div>
+
+<!-- Asset Grid -->
+<div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+    @foreach (var asset in Model)
+    {
+        <div class="glass-panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="height: 120px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                📦
+            </div>
+            <div style="padding: var(--space-md); flex-grow: 1;">
+                <div class="flex justify-between items-start mb-2">
+                    <div style="font-weight: 600; font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">
+                        @System.IO.Path.GetFileName(asset.BlobUrl)
+                    </div>
+                    <span class="badge badge-success" style="font-size: 0.65rem;">LIVE</span>
+                </div>
+                
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace; margin-bottom: var(--space-md); word-break: break-all;">
+                    Hash: @asset.Hash.Substring(0, 8)...
+                </div>
+
+                <div class="flex justify-between items-center" style="margin-top: auto;">
+                    <a href="@asset.BlobUrl" target="_blank" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Download</a>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">@asset.UploadedAt.ToString("MMM dd")</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div style="text-align: center; margin-top: 3rem; opacity: 0.5;">
+        <p>No assets uploaded yet.</p>
+    </div>
+}
+
+<script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const form = document.getElementById('upload-form');
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--accent-primary)';
+        dropZone.style.background = 'rgba(139, 92, 246, 0.1)';
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--border-glass)';
+        dropZone.style.background = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            form.submit();
+        }
+    });
+</script>

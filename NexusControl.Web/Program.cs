@@ -10,6 +10,13 @@ builder.AddServiceDefaults(); // Add ServiceDefaults
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR(); 
 
+// Register Infrastructure Services
+builder.Services.AddScoped<NexusControl.Core.Interfaces.IBlobStorageService>(provider => 
+{
+    var env = provider.GetRequiredService<IWebHostEnvironment>();
+    return new NexusControl.Infrastructure.Services.LocalBlobStorageService(env.WebRootPath);
+});
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

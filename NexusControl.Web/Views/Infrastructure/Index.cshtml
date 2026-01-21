@@ -1,0 +1,90 @@
+@model NexusControl.Web.Controllers.ServerStatusViewModel
+@{
+    ViewData["Title"] = "Infrastructure & Connection";
+}
+
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-gradient">Infrastructure Control</h2>
+    <div class="flex gap-4">
+        <button class="btn btn-secondary">
+            <span>🔄 Refresh Nodes</span>
+        </button>
+        <button class="btn btn-primary">
+            <span>+ Add Instance</span>
+        </button>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-6">
+    <!-- Unity Connection Config -->
+    <div class="glass-panel">
+        <h3 class="mb-4">🔌 Unity Client Configuration</h3>
+        <p class="text-muted mb-4">Use these settings to connect your Unity project via the Nexus SDK.</p>
+        
+        <div class="mb-4">
+            <label class="stat-label mb-2 block">SignalR Hub URL (WebSocket)</label>
+            <div class="flex gap-2">
+                <input type="text" value="@Model.WebSocketUrl" readonly class="btn btn-secondary w-full" style="text-align: left; font-family: monospace; color: var(--accent-secondary);" />
+                <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('@Model.WebSocketUrl')">📋</button>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="stat-label mb-2 block">Project API Key</label>
+            <div class="flex gap-2">
+                <input type="password" value="@Model.ApiKey" id="apiKey" readonly class="btn btn-secondary w-full" style="text-align: left; font-family: monospace; letter-spacing: 2px;" />
+                <button class="btn btn-secondary" onclick="toggleKey()">👁️</button>
+            </div>
+        </div>
+
+        <div>
+            <label class="stat-label mb-2 block">Connection Protocol</label>
+            <div style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 8px; font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">
+               Protocol: SignalR Core (JSON)<br/>
+               Transport: WebSockets (Primary) -> SSE -> Long Polling
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Nodes Visualization (Mock) -->
+    <div class="glass-panel" style="display: flex; flex-direction: column;">
+        <h3 class="mb-4">🌍 Regional Instances</h3>
+        
+        <div class="flex items-center gap-4 mb-4 p-3" style="background: rgba(43, 8, 168, 0.1); border: 1px solid rgba(43, 8, 168, 0.3); border-radius: 12px;">
+            <div style="width: 12px; height: 12px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+            <div>
+                <div style="font-weight: 600;">@Model.Region</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Latency: @Model.Ping ms • Load: 42%</div>
+            </div>
+            <div style="margin-left: auto;">
+                <span class="badge badge-success">Healthy</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 mb-4 p-3" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 12px; opacity: 0.7;">
+            <div style="width: 12px; height: 12px; background: #facc15; border-radius: 50%;"></div>
+            <div>
+                <div style="font-weight: 600;">US-East (Virginia)</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Latency: 112ms • Load: 89%</div>
+            </div>
+            <div style="margin-left: auto;">
+                <span class="badge badge-warning">High Load</span>
+            </div>
+        </div>
+
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-glass);">
+            <div class="flex justify-between text-muted" style="font-size: 0.8rem;">
+                <span>Total Active Instances</span>
+                <span class="text-main font-bold">@Model.ActiveInstances</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleKey() {
+        const input = document.getElementById('apiKey');
+        if (input.type === 'password') input.type = 'text';
+        else input.type = 'password';
+    }
+</script>
