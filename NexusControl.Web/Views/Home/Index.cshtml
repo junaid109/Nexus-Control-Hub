@@ -44,12 +44,96 @@
     <!-- Main Map / Activity Feed Area -->
     <div class="glass-panel" style="grid-column: span 2; min-height: 400px; padding: var(--space-lg);">
         <h3 class="mb-4">Live Activity Map</h3>
-        <div style="width: 100%; height: 300px; background: rgba(0,0,0,0.3); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border-glass);">
-            <div style="text-align: center; color: var(--text-muted);">
-                <p>Interactive Map Component Loading...</p>
-                <small>(Requires Azure SignalR Connection)</small>
+        <div style="width: 100%; height: 300px; position: relative; overflow: hidden; border-radius: var(--radius-md); border: 1px solid var(--border-glass);">
+            <canvas id="activityMap" style="width: 100%; height: 100%; background: rgba(10, 10, 15, 0.4);"></canvas>
+            
+            <div style="position: absolute; bottom: 10px; left: 15px; display: flex; gap: 10px; font-size: 0.75rem; color: var(--text-muted); pointer-events: none;">
+                <div class="flex items-center gap-2"><div style="width: 8px; height: 8px; background: cyan; border-radius: 50%;"></div> Idle</div>
+                <div class="flex items-center gap-2"><div style="width: 8px; height: 8px; background: #f472b6; border-radius: 50%;"></div> Combat</div>
+                <div class="flex items-center gap-2"><div style="width: 8px; height: 8px; background: #fbbf24; border-radius: 50%;"></div> Event</div>
             </div>
         </div>
+
+        <script>
+            (function() {
+                const canvas = document.getElementById('activityMap');
+                const ctx = canvas.getContext('2d');
+                
+                // Resize handling
+                function resize() {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                }
+                window.addEventListener('resize', resize);
+                resize();
+
+                // Simulation Data
+                const players = Array.from({ length: 40 }, () => ({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    state: Math.random() > 0.8 ? 'combat' : (Math.random() > 0.8 ? 'event' : 'idle')
+                }));
+
+                function drawDisplay() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Draw Grid
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                    ctx.lineWidth = 1;
+                    const gridSize = 40;
+                    
+                    for(let x = 0; x < canvas.width; x += gridSize) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                    }
+                    for(let y = 0; y < canvas.height; y += gridSize) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                    }
+
+                    // Draw Players
+                    players.forEach(p => {
+                        // Move
+                        p.x += p.vx;
+                        p.y += p.vy;
+
+                        // Bounce
+                        if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                        if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                        // Color based on state
+                        let color = 'cyan';
+                        if(p.state === 'combat') color = '#f472b6';
+                        else if(p.state === 'event') color = '#fbbf24';
+
+                        // Glow
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = color;
+                        ctx.fillStyle = color;
+
+                        // Draw Dot
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // Reset Shadow
+                        ctx.shadowBlur = 0;
+
+                        // Draw "Pulse" if in event
+                        if(p.state === 'event' && Math.random() > 0.95) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = color;
+                            ctx.arc(p.x, p.y, 10 + Math.random() * 10, 0, Math.PI * 2);
+                            ctx.stroke();
+                        }
+                    });
+
+                    requestAnimationFrame(drawDisplay);
+                }
+
+                drawDisplay();
+            })();
+        </script>
     </div>
 
     <!-- Live Feed / Sidebar -->
